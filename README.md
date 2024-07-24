@@ -11,7 +11,7 @@ This is a starter project for integrating OpenAI's API into a JavaScript applica
 
 ## Usage
 
-Modify `src/index.js` to implement your OpenAI-powered features.
+Modify `src/server.js` to implement your OpenAI-powered features.
 
 ## Environment Variables
 

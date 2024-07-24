@@ -7,11 +7,16 @@ const openai = new OpenAI({
 
 async function main() {
     const completion = await openai.chat.completions.create({
-        messages: [{ role: "assistant", content: "Hello, how can I assist you today? Yep!" }],
+        messages: [
+            { role: "assistant", content: "Hello, how can I assist you today? Yep!" },
+            { role: "user", content: "Can you tell me a joke?" },
+        ],
         model: "gpt-4-turbo",
     });
 
-    console.log(completion.choices[0]);
+    console.log(completion.choices[0].message.content);
 }
 
 main();
+
+
