@@ -4,7 +4,7 @@
   "description": "A starter project for OpenAI integration",
   "main": "src/index.js",
   "scripts": {
-    "start": "node src/index.js"
+    "start": "node src/chat_app/index.js"
   },
   "dependencies": {
     "@langchain/openai": "^0.2.4",
@@ -14,6 +14,7 @@
     "dotenv": "^16.0.3",
     "express": "^4.19.2",
     "langchain": "^0.2.10",
-    "openai": "^4.53.0"
+    "openai": "^4.53.0",
+    "tiktoken": "^1.0.15"
   }
 }
