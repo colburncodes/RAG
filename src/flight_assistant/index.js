@@ -44,6 +44,17 @@ function setFlightReservation(code) {
     console.log('Confirming reservations.')
 }
 
+function bookFlight(origin, destination, code) {
+    const availableFlights = getListOfFlights(origin, destination);
+    const selectedFlight = availableFlights.find((flight) => flight.code === code);
+    if (selectedFlight) {
+        setFlightReservation(code);
+        console.log('Flight booked successfully:', selectedFlight);
+    } else {
+        console.log('Flight not found or not available for the given route.');
+    }
+}
+
 /**
  * This function demonstrates how to make an API call to OpenAI's chat completions
  * endpoint with function-calling capabilities. It sets up a conversation context
@@ -100,6 +111,31 @@ async function createCompletion() {
                             }
                         }
                     }
+                }
+            },
+            {
+                type: 'function',
+                function: {
+                    name: 'bookFlight',
+                    description: 'Confirms booking of flight.',
+                    parameters: {
+                        type: 'object',
+                        properties: {
+                            origin: {
+                                type: 'string',
+                                description: 'departure of a flight.'
+                            },
+                            destination: {
+                                type: 'string',
+                                description: 'destination of a flight'
+                            },
+                            code: {
+                                type: 'string',
+                                description: 'The code of the flight service',
+                            }
+                        }
+                    },
+                    required: ['origin', 'destination', 'code'],
                 }
             }
         ]
