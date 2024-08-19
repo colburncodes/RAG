@@ -13,6 +13,31 @@ const context = [{
 
 function getListOfFlights(origin, destination) {
     console.log('Getting available flights.')
+
+    const flights = [
+        {
+            depart: "CLT",
+            arrival: "STL",
+            code: 'STL245'
+        },
+        {
+            depart: "CGK",
+            arrival: "DPS",
+            code: 'GA4252'
+        },
+        {
+            depart: "CGK",
+            arrival: "DPS",
+            code: 'GA4253'
+        },
+        {
+            depart: "CLT",
+            arrival: "STL",
+            code: 'STL243'
+        }
+    ]
+
+    return flights.filter((f) => f.depart === origin && f.arrival === destination);
 }
 
 function setFlightReservation(code) {
