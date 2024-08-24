@@ -50,8 +50,10 @@ function bookFlight(origin, destination, code) {
     if (selectedFlight) {
         setFlightReservation(code);
         console.log('Flight booked successfully:', selectedFlight);
+        // TODO: Add better error handling
     } else {
         console.log('Flight not found or not available for the given route.');
+        // TODO: Add better error handling
     }
 }
 
@@ -139,5 +141,46 @@ async function createCompletion() {
                 }
             }
         ]
-    })
+    });
+
+    let willInvokeFunction = response.choices[0].finish_reason === "tool_calls";
+    let toolCall;
+
+    if (response.choices[0].message.tool_calls) {
+        toolCall = response.choices[0].message.tool_calls[0];
+    }
+    if (willInvokeFunction && toolCall) {
+       const { name, rawArguments } = toolCall.function;
+       const parsedArguments = JSON.parse(rawArguments);
+
+       if (name === 'getListOfFlights') {
+           const { origin, destination } = parsedArguments;
+           const flights = getListOfFlights(origin, destination);
+           console.log('Available Flights:', flights);
+           // TODO: Add these flights to the context for AI generation
+       }
+
+       if (name === 'bookFlight') {
+           const { origin, destination, code } = parsedArguments;
+           bookFlight(origin, destination, code);
+       }
+
+       if (name === 'setFlightReservation') {
+           const { code } = parsedArguments;
+           setFlightReservation(code);
+           console.log('Reservation set for flight:', code);
+       }
+    }
+}
+
+async function chatBot() {
+    while (true) {
+        const userInput = await getUserInput(); // Need implementation
+        context.push({ role: 'user', content: userInput });
+
+        await createCompletion();
+
+        // TODO:  Handle the AIs response
+        // TODO: Check if the AI asked a question or waiting for a resposne.
+    }
 }
