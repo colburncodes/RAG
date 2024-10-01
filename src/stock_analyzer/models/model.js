@@ -24,7 +24,15 @@ class StockModel {
                 throw new Error(response.data['Error Message']);
             }
 
+            if (!response.data['Time Series (Daily)']) {
+                console.error(`No daily time series data for ${symbol}`);
+                console.log('Response data:', JSON.stringify(response.data, null, 2));
+                return { [symbol]: null};
+            }
+
             const data = response.data['Time Series (Daily)'];
+            console.log(`Raw data for ${symbol}:`, Object.keys(data).length, 'days');
+
             const filteredData = Object.entries(data)
                 .filter(([date]) => date >= startDate && date <= endDate)
                 .reduce((acc, [date, values]) => {
@@ -49,10 +57,15 @@ class StockModel {
         const results = [];
         for (const symbol of assets) {
             console.log(`Fetching data for ${symbol}...`);
-            results.push(await this.fetchStockData(symbol, startDate, endDate));
+            const result = await this.fetchStockData(symbol, startDate, endDate);
+            results.push(result);
+            if (result[symbol] === null) {
+                console.warn(`No data fetched for ${symbol}`);
+            }
             await new Promise(resolve => setTimeout(resolve, 12000)); // 12-second delay
         }
         this.stockData = Object.assign({}, ...results);
+        console.log('All stock data fetched:', Object.keys(this.stockData));
         return this.stockData;
     }
 
@@ -64,8 +77,15 @@ class StockModel {
     summarizeStockData(data) {
         let summary = {};
         for (const [symbol, timeSeries] of Object.entries(data)) {
-            if (!timeSeries) continue;
+            if (!timeSeries) {
+                console.warn(`No time series data for ${symbol}`);
+                continue;
+            }
             const dates = Object.keys(timeSeries).sort();
+            if (dates.length === 0) {
+                console.warn(`No dates in time series for ${symbol}`);
+                continue;
+            }
             const firstDate = dates[0];
             const lastDate = dates[dates.length - 1];
             const firstClose = parseFloat(timeSeries[firstDate]['4. close']);
@@ -80,6 +100,7 @@ class StockModel {
                 percentChange: percentChange.toFixed(2)
             };
         }
+        console.log('Summary create for: ', Object.keys(summary));
         return summary;
     }
 }

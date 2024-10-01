@@ -17,10 +17,10 @@ class StockController {
                 this.view.displayFetchingStatus(symbol);
             }
 
-            await this.model.fetchAllStockData(assets, startYear, endYear);
+            const stockData = await this.model.fetchAllStockData(assets, startYear, endYear);
             this.view.displayFetchComplete();
 
-            const summary = this.model.summarizeStockData();
+            const summary = this.model.summarizeStockData(stockData);
             this.view.displaySummary(summary);
 
             const analysis = await this.analyzeStockData(summary);
